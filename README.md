@@ -1,7 +1,10 @@
-# lemp-deployment-aws(WORK IN PROGRESS)
+# lemp-deployment-aws
 This repository contains a step by step guide for deploying a LEMP stack (Linux, eNginx, MySQL, PHP) stack on Amazon Web Services (AWS)
-REQIOREMENTS
+
+REQUIREMENTS
+
 EC2 iInstance
+
 GitBash(Optional)
 
 **STEP O : EC2 INSTANCE CONNECTION**
@@ -12,7 +15,7 @@ GitBash(Optional)
 
    ![image](https://github.com/user-attachments/assets/843e0994-5718-4642-872d-f4984f4ce26e)
    
-** STEP 1 : NGINX SERVER INSTALLATION AND CONFIGURATION**
+**STEP 1 : NGINX SERVER INSTALLATION AND CONFIGURATION**
 
 i. Being a new session on this instance,let's update our server service index using the command
 
@@ -99,7 +102,7 @@ Unlike in LAMP stack where apache enables the PHP in each request,Nginx operates
 
   ![image](https://github.com/user-attachments/assets/5e5d00ee-b46c-4736-b5c3-117f5b9c6efb)
 
-** STEP 4: CONFIGURING NGINX TO USE PHP PROCESSOR**
+**STEP 4: CONFIGURING NGINX TO USE PHP PROCESSOR**
 
    Just like we create virtual hosts  in Apache,we'll create server blocks in Nginx to key in our configuration details and host more than one domain on a single server.By default Nginx serve documents out of /var/www/html which is fine for single sites but for hosting muliple sites on this server,it's better to create a sub-directory rather than modifying tjhat default directory.We don't like stress right?
    
@@ -254,6 +257,83 @@ v.    Let's test if the user has proper permissions by logging into the MySQL co
 vi. Now let's access our database
 
              SHOW DATABASES;
+             
+We get this table output
+
+  ![image](https://github.com/user-attachments/assets/5ea80041-c558-45e0-804c-ff9758a38e49)
+
+vii. Now let's create a test table named todo_list by running the following commands
+
+            CREATE TABLE example_database.todo_list (
+            item_id INT AUTO_INCREMENT,
+            content VARCHAR(255),
+            PRIMARY KEY(item_id)
+            );
+  vii. Let's try to insert something in our table
+
+              INSERT INTO example_database.todo_list (content) VALUES ("Let's not break this table");
+              
+  viii. To confirm that our data input was saved.
+
+               SELECT * FROM example_database.todo_list;
+
+   ![image](https://github.com/user-attachments/assets/f837a821-9e33-43c0-86e9-68777b7fe9e9)
+
+   exit the mysql console afterwards.
+
+   ix.  To end with,let's create a PHP script that will connect to mysql and query for content.We'll be doing this in our web root directory and Yes!I'll be using vim
+
+                  vim /var/www/projectLEMP/todo_list.php
+
+   Then our script...
+
+
+                                 
+         <?php
+          $user = "example_user";
+          $password = "PassWord.1"; // Updated password
+          $database = "example_database";
+          $table = "todo_list";
+
+          try {
+          $db = new PDO("mysql:host=localhost;dbname=$database", $user, $password);
+           $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+           echo "<h2>TODO</h2><ol>";
+
+           $stmt = $db->query("SELECT content FROM $table");
+
+          foreach ($stmt as $row) {
+           echo "<li>" . htmlspecialchars($row['content']) . "</li>";
+           }
+
+           echo "</ol>";
+            } catch (PDOException $e) {
+             echo "Error!: " . $e->getMessage() . "<br/>";
+            die();
+             }
+             ?>
+
+
+
+
+
+
+   ![image](https://github.com/user-attachments/assets/7a21082e-e776-4126-ac99-96167f0b85e5)
+
+   x. We dash to our browser to see the content
+
+
+  ![image](https://github.com/user-attachments/assets/faec594c-1199-4c42-83f1-df66661248ee)
+
+
+  Cheers!
+
+
+   
+
+  
+           
    
 
       
