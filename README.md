@@ -3,7 +3,7 @@ This repository contains a step by step guide for deploying a LEMP stack (Linux,
 
 REQUIREMENTS
 
-EC2 iInstance
+EC2 instance
 
 GitBash(Optional)
 
